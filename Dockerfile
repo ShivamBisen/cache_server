@@ -1,19 +1,16 @@
-FROM archlinux:latest
+FROM gcc:13
 
-# Install build tools and dependencies
-RUN pacman -Syu --noconfirm && \
-    pacman -S --noconfirm cmake gcc make base-devel
-
-# Copy project files
 WORKDIR /app
+
+# Copy files
 COPY . .
 
-# Build the C++ server
-RUN cmake -Bbuild -H. && \
-    cmake --build build
+# Build your project using CMake
+RUN apt update && apt install -y cmake
+RUN mkdir build && cd build && cmake .. && make
 
-# Expose the port your app listens on
+# Expose TCP port
 EXPOSE 8080
 
-# Run the server
+# Start the server
 CMD ["./build/cache_server"]
